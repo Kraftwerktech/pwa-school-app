@@ -1,50 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import logo from "../assets/Teacher/logo1.png";
 import { AiFillDashboard } from "react-icons/ai";
 import { MdCoPresent } from "react-icons/md";
 import { PiStudentDuotone } from "react-icons/pi";
 import { CiCalendar } from "react-icons/ci";
-import { TbCalendarTime } from "react-icons/tb";
-import { GoPeople } from "react-icons/go";
-import { PiMessengerLogoLight } from "react-icons/pi";
 import { LuCalendarDays } from "react-icons/lu";
-import { GrAnnounce } from "react-icons/gr";
 import { MdOutlinePlayLesson, MdOutlineAssignment } from "react-icons/md";
 import { LuActivitySquare } from "react-icons/lu";
 import { MdOutlineClass, MdSubject } from "react-icons/md";
 import { SiHtmlacademy } from "react-icons/si";
-import { SiGooglemeet } from "react-icons/si";
-import { VscRepo } from "react-icons/vsc";
-import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { PiChalkboardTeacherDuotone } from "react-icons/pi";
 import { LuBookPlus } from "react-icons/lu";
-import { FiMinus } from "react-icons/fi";
-import { MdAssignmentInd } from "react-icons/md";
-import { GrResources } from "react-icons/gr";
+import { RxHamburgerMenu } from "react-icons/rx";
 
-import logo from '../assets/Teacher/logo1.png';
+
 
 const Sidebar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [openMenus, setOpenMenus] = useState({});
- 
   const location = useLocation();
-  const currentPath = location.pathname; // Get current path
-
-  // Set initial activeMenu based on location.pathname
+  const currentPath = location.pathname;
   const [activeMenu, setActiveMenu] = useState(currentPath);
-  const [userRole, setUserRole] = useState('');
+  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
-    const fetchUserData = () => {
-      const role = localStorage.getItem('role') 
-
-      setUserRole(role);
-     
-    };
-
-    fetchUserData();
+    const role = localStorage.getItem("role");
+    setUserRole(role);
   }, []);
 
   const menuItems = [
@@ -55,8 +38,8 @@ const Sidebar = () => {
       icon: <MdCoPresent />,
       submenu: [
         { path: "class-attendance", role: "Teacher", name: "Class Attendance", icon: <MdOutlineClass /> },
-        { path: "subject-attendance", role: "Teacher", name: "Subject Attendance", icon: <MdSubject /> }
-      ]
+        { path: "subject-attendance", role: "Teacher", name: "Subject Attendance", icon: <MdSubject /> },
+      ],
     },
     {
       name: "Curriculum",
@@ -67,77 +50,61 @@ const Sidebar = () => {
         { path: "approveLesson", role: "Teacher", name: "Lesson Plan", icon: <MdOutlinePlayLesson /> },
         { path: "activiyttrack", role: "Teacher", name: "Activity Tracking", icon: <LuActivitySquare /> },
         { path: "createsyllabusapproved", role: "Teacher", name: "Create Syllabus", icon: <LuBookPlus /> },
-      ]
+      ],
     },
     { path: "marked", role: "Teacher", name: "Assessment", icon: <MdOutlineAssignment /> },
     { path: "class-routine", role: "Teacher", name: "Routine", icon: <CiCalendar /> },
     { path: "student-info", role: "Teacher", name: "Student Directory", icon: <PiStudentDuotone /> },
     { path: "teacher-info", role: "Teacher", name: "Teacher Directory", icon: <PiChalkboardTeacherDuotone /> },
-    {
-      name: "Guardian Collaboration",
-      role: "Teacher",
-      icon: <GoPeople />,
-      submenu: [
-        { path: "upcomming", role: "Teacher", name: "Arrange Meeting", icon: <SiGooglemeet /> },
-        { path: "messagecollaboration", role: "Teacher", name: "Messaging", icon: <PiMessengerLogoLight /> },
-      ]
-    },
-    { path: "announcement", role: "Teacher", name: "Announcement", icon: <GrAnnounce /> },
-    { path: "/coordinator/dashboard", role: "Coordinator", name: "Dashboard", icon: <AiFillDashboard /> },
-    { path: "student-dir", role: "Coordinator", name: "Student Directory", icon: <PiStudentDuotone /> },
-    { path: "CoApprovedsyllabus", role: "Coordinator", name: "Syllabus", icon: <LuCalendarDays /> },
-    { path: "substitute-scheduling", role: "Coordinator", name: "Substitute Scheduling", icon: <TbCalendarTime /> },
-    { path: "teacherlist", role: "Coordinator", name: "Teacher Directory", icon: <LiaChalkboardTeacherSolid /> },
-    { path: "assingsyllabus", role: "Coordinator", name: "Assign Syllabus", icon: <MdAssignmentInd /> },
-    { path: "resourceallowcation", role: "Coordinator", name: "Resource Allocation", icon: <GrResources /> },
-    { path: "CMeeting", role: "Coordinator", name: "Meetings", icon: <SiGooglemeet /> },
-    { path: "coapprovedLesson", role: "Coordinator", name: "Lesson Plan", icon: <VscRepo /> },
-    { path: "CAnnuncement", role: "Coordinator", name: "Announcements", icon: <GrAnnounce /> },
+    // Add more menu items as needed
   ];
 
-  const filteredMenuItems = menuItems.filter(item => item.role === userRole);
+  const filteredMenuItems = menuItems.filter((item) => item.role === userRole);
 
   const handleMenuClick = (path) => {
     setShowSidebar(false);
-    setActiveMenu(path); // Update the active menu with the path
+    setActiveMenu(path);
   };
 
   const handleSubmenuToggle = (name) => {
-    setOpenMenus(prevState => ({
+    setOpenMenus((prevState) => ({
       ...prevState,
-      [name]: !prevState[name]
+      [name]: !prevState[name],
     }));
   };
 
   if (!userRole) return null;
 
   return (
-<div>
+    <div>
       <button
         onClick={() => setShowSidebar(!showSidebar)}
-        className="fixed top-4 left-4 z-50 p-2 bg-blue-500 text-white rounded-lg"
+        className="fixed top-4  items-center z-50 p-2 bg-transparent  text-black rounded-lg md:hidden"
       >
-        {showSidebar ? 'Close' : 'Open'} Sidebar
+        {showSidebar ? <RxHamburgerMenu className=" w-16"/> :<RxHamburgerMenu className=" w-16 h-7"/>}
       </button>
 
       {showSidebar && (
         <div
           onClick={() => setShowSidebar(false)}
-          className="fixed inset-0 bg-[#22292f80] z-10 transition-opacity duration-200"
+          className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
         />
       )}
 
       <div
-        className={`fixed top-0 left-0 w-[260px] h-screen bg-[#F6F9F7] shadow-lg transition-transform duration-900 z-50 ${
-          showSidebar ? 'translate-x-0' : '-translate-x-[260px] lg:translate-x-0'
+        className={`fixed top-0 left-0 w-[260px] h-full bg-gray-100 shadow-lg transition-transform duration-300 z-50 ${
+          showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="h-[70px] flex justify-center items-center">
-        <Link to={userRole === "Coordinator" ? "/coordinator/dashboard" : "/teacher/dashboard"} className="w-[180px] h-[50px]">
-            <img className="w-[200px] h-full" src={logo} alt="Logo" />
+        <div className="h-[70px] flex justify-center items-center bg-gray-200">
+          <Link
+            to={userRole === "Coordinator" ? "/coordinator/dashboard" : "/teacher/dashboard"}
+            className="w-[180px] h-[50px]"
+          >
+            <img className="w-full h-full object-contain" src={logo} alt="Logo" />
           </Link>
         </div>
-        <div className="px-[16px] mt-2">
+        <div className="p-4">
           <ul className="space-y-2">
             {filteredMenuItems.map((item, index) => (
               <li key={index}>
@@ -145,31 +112,36 @@ const Sidebar = () => {
                   <>
                     <div
                       onClick={() => handleSubmenuToggle(item.name)}
-                      className={`flex justify-between items-center text-[#465049] w-[224px] h-[48px] rounded-lg font-normal pl-[14px] pr-[12px] py-4 cursor-pointer transition-colors duration-900 ${
-                        openMenus[item.name] ? 'bg-[#465049] text-white' : 'bg-[#E4EBE6] hover:bg-[#465049] hover:text-white'
+                      className={`flex justify-between items-center p-3 rounded-lg cursor-pointer ${
+                        openMenus[item.name] ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"
                       }`}
                     >
-                      <div className="flex items-center gap-x-2">
-                        <span className="text-[26px]">{item.icon}</span>
+                      <div className="flex items-center gap-2">
+                        {item.icon}
                         <span>{item.name}</span>
                       </div>
-                      <IoMdArrowDropdown className={`text-[20px] transition-transform duration-1000 ${openMenus[item.name] ? 'rotate-180' : ''}`} />
+                      <IoMdArrowDropdown
+                        className={`transition-transform duration-300 ${
+                          openMenus[item.name] ? "rotate-180" : ""
+                        }`}
+                      />
                     </div>
                     <ul
-                      className={`overflow-hidden transition-all duration-900 ${openMenus[item.name] ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}
+                      className={`overflow-hidden transition-all duration-300 ${
+                        openMenus[item.name] ? "max-h-screen" : "max-h-0"
+                      }`}
                     >
                       {item.submenu.map((subItem, subIndex) => (
-                        <li key={subIndex} className="flex items-center pl-6  space-y-2">
-                          <FiMinus className="text-[#868987]" />
+                        <li key={subIndex}>
                           <Link
                             to={subItem.path}
                             onClick={() => handleMenuClick(subItem.path)}
-                            className={`text-[#465049] w-[200px] h-[35px] rounded-lg font-normal px-[16px] py-[10px] flex items-center transition-colors duration-900 ${
-                              activeMenu === subItem.path ? 'bg-[#465049] text-white' : 'bg-[#E4EBE6] hover:bg-[#465049] hover:text-white'
+                            className={`flex items-center gap-2 pl-6 pr-4 py-2 rounded-lg ${
+                              activeMenu === subItem.path ? "bg-gray-300" : "hover:bg-gray-300"
                             }`}
                           >
-                            <span className="text-[26px] mr-[1px]">{subItem.icon}</span>
-                            <span className="text-[15px]">{subItem.name}</span>
+                            {subItem.icon}
+                            <span>{subItem.name}</span>
                           </Link>
                         </li>
                       ))}
@@ -179,11 +151,11 @@ const Sidebar = () => {
                   <Link
                     to={item.path}
                     onClick={() => handleMenuClick(item.path)}
-                    className={`text-[#465049] w-[224px] h-[48px] rounded-lg font-normal pl-[12px] pr-[12px] py-4 flex items-center gap-x-2 transition-colors duration-900 ${
-                      activeMenu === item.path ? 'bg-[#465049] text-white' : 'bg-[#E4EBE6] hover:bg-[#465049] hover:text-white'
+                    className={`flex items-center gap-2 p-3 rounded-lg ${
+                      activeMenu === item.path ? "bg-gray-300" : "hover:bg-gray-300"
                     }`}
                   >
-                    <span className="text-[26px]">{item.icon}</span>
+                    {item.icon}
                     <span>{item.name}</span>
                   </Link>
                 )}

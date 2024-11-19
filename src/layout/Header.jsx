@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaList, FaCaretDown } from 'react-icons/fa';
 import { IoMdNotificationsOutline } from 'react-icons/io';
-import teacher from '../assets/Teacher/teacher.jpg'; // Replace with appropriate icon or image for notifications
-import { CiTrash } from "react-icons/ci";
+import { CiTrash } from 'react-icons/ci';
 import { Link, useLocation } from 'react-router-dom';
+import teacher from '../assets/Teacher/teacher.jpg'; // Replace with the appropriate icon or image for notifications
 
 const Header = ({ showSidebar, setShowSidebar }) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -13,29 +13,28 @@ const Header = ({ showSidebar, setShowSidebar }) => {
     { id: 2, message: 'Assignment deadline approaching', timestamp: '1 hour ago', icon: teacher },
     { id: 3, message: 'New class schedule available', timestamp: 'Yesterday', icon: teacher },
     { id: 4, message: 'Meeting at 3 PM', timestamp: 'Yesterday', icon: teacher },
-    { id: 5, message: 'Meeting at 3 PM', timestamp: 'Yesterday', icon: teacher }
   ]);
   const [unreadCount, setUnreadCount] = useState(notifications.length);
   const [filter, setFilter] = useState('all');
-  const role = localStorage.getItem('role')
-  const name = localStorage.getItem('name')
-  const image = localStorage.getItem('image')
+  const role = localStorage.getItem('role');
+  const name = localStorage.getItem('name');
+  const image = localStorage.getItem('image') || teacher;
   const notificationRef = useRef(null);
   const profileRef = useRef(null);
   const location = useLocation();
 
   useEffect(() => {
-    // Hide dropdowns when navigating to a new page
     setShowDropdown(false);
     setShowNotifications(false);
   }, [location]);
 
   useEffect(() => {
-    // Event listener to handle clicks outside of the dropdowns
     const handleClickOutside = (event) => {
       if (
-        notificationRef.current && !notificationRef.current.contains(event.target) &&
-        profileRef.current && !profileRef.current.contains(event.target)
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target) &&
+        profileRef.current &&
+        !profileRef.current.contains(event.target)
       ) {
         setShowNotifications(false);
         setShowDropdown(false);
@@ -50,145 +49,155 @@ const Header = ({ showSidebar, setShowSidebar }) => {
 
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
-    if (showNotifications) setShowNotifications(false); // Close notifications if dropdown is opened
+    if (showNotifications) setShowNotifications(false);
   };
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
-    if (showDropdown) setShowDropdown(false); // Close profile dropdown if notifications are opened
+    if (showDropdown) setShowDropdown(false);
   };
 
   const handleDeleteNotification = (id) => {
-    setNotifications(notifications.filter(notification => notification.id !== id));
-    setUnreadCount(notifications.length - 1);
+    setNotifications(notifications.filter((notification) => notification.id !== id));
+    setUnreadCount((prev) => Math.max(0, prev - 1));
   };
 
-  const filteredNotifications = filter === 'unread'
-    ? notifications.slice(0, unreadCount)
-    : notifications;
+  const filteredNotifications =
+    filter === 'unread' ? notifications.slice(0, unreadCount) : notifications;
 
   return (
-    <div className='fixed w-full z-10'> {/* Ensures header is above all content */}
-      <div className='ml-0 lg:ml-[260px] h-[65px] flex justify-between items-center bg-[#F6F9F7] text-[#f2f4f6] px-5 transition-all'>
+    <div className="fixed w-full z-10 bg-[#F6F9F7]">
+      <div className="h-[65px] flex justify-between items-center px-5 shadow-sm">
+        {/* Sidebar Toggle */}
         <div
           onClick={() => setShowSidebar(!showSidebar)}
-          className='w-[35px] flex lg:hidden h-[35px] rounded-sm bg-indigo-500 shadow-lg hover:shadow-indigo-500/50 justify-center items-center cursor-pointer'
+          className="w-[35px] flex lg:hidden h-[35px] rounded-sm text-black hover:shadow-indigo-500/50 justify-center items-center cursor-pointer"
         >
-          <FaList className='text-white' />
         </div>
 
-        <div className='hidden md:block'>
+        {/* Search Input */}
+        <div className="hidden sm:block flex-grow max-w-md">
           <input
-            className='px-3 py-2 outline-none border bg-transparent border-slate-300 rounded-md text-[#d0d2d6] focus:border-indigo-500 overflow-hidden'
+            className="w-full px-3 py-2 outline-none border bg-transparent border-slate-300 rounded-md text-[#333] focus:border-indigo-500"
             type="text"
-            name='search'
-            placeholder='Search'
+            name="search"
+            placeholder="Search"
           />
         </div>
 
-        <div className='flex justify-center ml-5 items-center gap-8 relative'>
-          {/* Notification Icon */}
-          <div className='relative z-20' ref={notificationRef}> {/* Ensures notifications dropdown is above profile dropdown */}
-            <IoMdNotificationsOutline 
-              className={`text-xl cursor-pointer w-7 h-7 ${showNotifications ? 'text-blue-500' : 'text-[#BB5042]'}`}
-              onClick={toggleNotifications} 
+        {/* Right Section */}
+        <div className="flex items-center gap-5">
+          {/* Notifications */}
+          <div className="relative" ref={notificationRef}>
+            <IoMdNotificationsOutline
+              className={`text-2xl cursor-pointer ${
+                showNotifications ? 'text-blue-500' : 'text-[#BB5042]'
+              }`}
+              onClick={toggleNotifications}
             />
             {unreadCount > 0 && (
-              <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex justify-center items-center'>
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex justify-center items-center">
                 {unreadCount}
               </span>
             )}
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className='absolute w-[500px] top-full right-0 mt-2 bg-white shadow-lg rounded-md py-2 z-100'>
-                <div className='px-5 py-2 text-[20px] border-b text-gray-700 font-semibold'>Notifications</div>
-                <div className='flex px-5 py-2 gap-4 w-full h-[48px] mt-2 mb-2'>
-                  <button 
-                    className={`px-5 text-center border-[1px] rounded-md ${filter === 'all' ? 'bg-[#616158] text-white' : 'text-gray-600'} hover:bg-[#616158] hover:text-white`}
+              <div className="absolute right-0 mt-2 w-[300px] bg-white shadow-lg rounded-md py-2 max-h-[300px] overflow-y-auto">
+                <div className="px-4 py-2 text-lg font-semibold text-gray-700 border-b">
+                  Notifications
+                </div>
+                <div className="flex gap-2 px-4 py-2">
+                  <button
+                    className={`px-4 py-1 border rounded-md ${
+                      filter === 'all' ? 'bg-indigo-500 text-white' : 'text-gray-600'
+                    }`}
                     onClick={() => setFilter('all')}
                   >
                     All
                   </button>
-                  <button 
-                    className={`px-5 border-[1px] rounded-md ${filter === 'unread' ? 'bg-[#616158] text-white' : 'text-gray-600'} hover:bg-[#616158] hover:text-white`}
+                  <button
+                    className={`px-4 py-1 border rounded-md ${
+                      filter === 'unread' ? 'bg-indigo-500 text-white' : 'text-gray-600'
+                    }`}
                     onClick={() => setFilter('unread')}
                   >
                     Unread
                   </button>
-                  <div className='justify-end text-black mt-2 ml-[160px]'>
-                    <span>Mark all as read</span>
-                  </div>
                 </div>
-                <div className='max-h-[350px] max-w-[480px] justify-center pl-[20px] scrollbar-custom overflow-y-auto'>
-                  {filteredNotifications.length > 0 ? (
-                    filteredNotifications.map((notification, index) => (
-                      <div 
-                        key={notification.id} 
-                        className={`px-4 py-2 border-b last:border-b-0 flex justify-between items-center ${index % 2 === 0 ? 'bg-[#e9efeb]' : 'bg-[#F6F9F7]'}`}
-                      >
-                        <div className='flex items-center'>
-                          <img 
-                            src={notification.icon} 
-                            alt="icon" 
-                            className='w-[50px] h-[50px] rounded-full mr-3' 
-                          />
-                          <div>
-                            <p className='text-gray-800 font-semibold'>{notification.message}</p>
-                            <p className=' text-black'>Please Conforim your all personal</p>
-                            <span className='text-gray-500 text-sm'>{notification.timestamp}</span>
-                          </div>
-                        </div>
-                        < CiTrash 
-                          className='text-[#bb5042] w-5 h-5 cursor-pointer'
-                          onClick={() => handleDeleteNotification(notification.id)}
+                {filteredNotifications.length > 0 ? (
+                  filteredNotifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className="flex justify-between items-center px-4 py-2 border-b last:border-0"
+                    >
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={notification.icon}
+                          alt="icon"
+                          className="w-8 h-8 rounded-full"
                         />
+                        <div>
+                          <p className="text-sm font-medium text-gray-800">
+                            {notification.message}
+                          </p>
+                          <span className="text-xs text-gray-500">
+                            {notification.timestamp}
+                          </span>
+                        </div>
                       </div>
-                    ))
-                  ) : (
-                    <div className='px-4 py-2 text-gray-500'>No notifications</div>
-                  )}
-                </div>
+                      <CiTrash
+                        className="text-red-500 cursor-pointer"
+                        onClick={() => handleDeleteNotification(notification.id)}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div className="px-4 py-2 text-sm text-gray-500">No notifications</div>
+                )}
               </div>
             )}
           </div>
 
-          <div className='flex justify-center items-center'>
-            <div className='flex justify-center items-center gap-3 relative z-10' ref={profileRef}> {/* Ensures profile dropdown is below notifications */}
-            <div className='flex items-center cursor-pointer' onClick={toggleDropdown}>
-                <img
-                  className='w-[45px] h-[45px] rounded-full overflow-hidden border-[3px] border-[#BB5042]'
-                  src={image}
-                  alt="profile"
-                />
-              </div>
-              <div className='flex justify-center items-center flex-col pr-8'>
-             
-                <h2 onClick={toggleDropdown} className='text-sm text-[#000] font-bold flex'>
-                  <span>{name}</span>
-                <FaCaretDown className='text-xl text-[#BB5042] ml-2' />
-                </h2>
-                
-                <span className='text-[14px] text-gray-400 w-full font-normal'>{role}</span>
-              </div>
-              
-              {/* Dropdown Menu */}
-              {showDropdown && (
-                <div className='absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-50'>
-                  <Link to="/teacher/dashboard/teacher-profile" className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>
-                    Profile
-                  </Link>
-                  <Link to="/teacher/dashboard/verifyidentybyprofile-pass-profile" className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>
-                    Reset Password
-                  </Link>
-                  <a href="/teacher/dashboard/setting" className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>
-                    Settings
-                  </a>
-                  <a href="/" className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>
-                    Logout
-                  </a>
-                </div>
-              )}
+          {/* Profile */}
+          <div className="relative flex items-center gap-3 cursor-pointer" ref={profileRef}>
+            <img
+              src={image}
+              alt="Profile"
+              className="w-10 h-10 rounded-full border-2 border-indigo-500"
+              onClick={toggleDropdown}
+            />
+            <div onClick={toggleDropdown} className="text-sm">
+              <p className="font-bold text-gray-800">{name || 'User'}</p>
+              <span className="text-xs text-gray-500">{role || 'Role'}</span>
             </div>
+            {showDropdown && (
+              <div className="absolute right-0 mt-2 w-[200px] bg-white shadow-lg rounded-md py-2">
+                <Link
+                  to="/teacher/dashboard/teacher-profile"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Profile
+                </Link>
+                <Link
+                  to="/teacher/dashboard/verifyidentity"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Reset Password
+                </Link>
+                <Link
+                  to="/teacher/dashboard/settings"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Settings
+                </Link>
+                <Link
+                  to="/logout"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Logout
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

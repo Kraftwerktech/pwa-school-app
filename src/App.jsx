@@ -2,7 +2,7 @@ import React, { lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 const MainLayout = lazy(() => import('./layout/MainLayout'));
-const TeacherDashboard = lazy(() => import('./views/Teacher/Dashboard'));
+const TeacherDashboard = lazy(() => import('./views/Teacher/Dashboard/TeacherDashboard'));
 
 const  Teacherlogin = lazy(() => import('./views/Auth/teacherLogin'));
 
